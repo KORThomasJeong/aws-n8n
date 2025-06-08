@@ -4,7 +4,7 @@
 
 ## 시스템 요구사항
 
-- AWS Lightsail 인스턴스 (최소 2GB RAM, 2 vCPU 권장)
+- AWS Lightsail 인스턴스 (최소 1GB RAM, 2 vCPU 권장)
 - Ubuntu 20.04 LTS 이상
 - 관리자(sudo) 권한
 
