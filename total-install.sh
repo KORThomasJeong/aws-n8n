@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # AWS Lightsail에 n8n, Nginx Proxy Manager, OpenWebUI 설치 스크립트
-# 작성자: ThomasJeong
+# 작성자: Cline
 # 날짜: 2025-06-08
 
 # 색상 정의
@@ -107,8 +107,12 @@ install_docker() {
     # 현재 사용자를 docker 그룹에 추가
     usermod -aG docker $SUDO_USER
     
+    # Docker 소켓 권한 설정
+    chmod 666 /var/run/docker.sock
+    
     log "Docker 설치 완료: $(docker --version)"
     log "Docker Compose 설치 완료: $(docker-compose --version)"
+    log "Docker 권한 설정 완료. 로그아웃 후 다시 로그인하면 sudo 없이 Docker 명령어를 사용할 수 있습니다."
 }
 
 # 기본 디렉토리 구조 생성
@@ -598,3 +602,5 @@ create_start_script
 log "설치가 완료되었습니다."
 log "서비스를 시작하려면 다음 명령어를 실행하세요:"
 log "cd /home/$SUDO_USER/docker && ./start-services.sh"
+log "Docker 권한 문제가 있다면 다음 명령어를 실행하세요:"
+log "sudo chmod 666 /var/run/docker.sock"
