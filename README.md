@@ -15,7 +15,7 @@
 2. 다음 명령어로 설치 스크립트를 다운로드합니다:
 
 ```bash
-wget [https://raw.githubusercontent.com/KORThomasJeong/aws-n8n/main/total-install.sh](https://raw.githubusercontent.com/KORThomasJeong/aws-n8n/refs/heads/master/total-install.sh)
+wget https://raw.githubusercontent.com/KORThomasJeong/aws-n8n/refs/heads/master/total-install.sh
 chmod +x total-install.sh
 ```
 
