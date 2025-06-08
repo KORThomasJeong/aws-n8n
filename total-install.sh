@@ -387,7 +387,7 @@ source "\$ENV_FILE"
 
 # 메뉴 표시
 echo "변경할 설정을 선택하세요:"
-echo "1) 웹훅 URL 변경"
+echo "1) N8N 웹훅 URL 변경"
 echo "2) 이메일 설정 변경"
 echo "3) 데이터베이스 비밀번호 변경"
 echo "4) 종료"
@@ -566,146 +566,35 @@ EOF
     log "서비스 시작 스크립트 생성 완료"
 }
 
-# README.md 파일 생성
-create_readme() {
-    log "README.md 파일 생성 중..."
-    
-    cat > /home/$SUDO_USER/aws-n8n/README.md << EOF
-# AWS Lightsail n8n, Nginx Proxy Manager, OpenWebUI 설치 가이드
+# 메인 실행 부분
+log "AWS Lightsail에 n8n, Nginx Proxy Manager, OpenWebUI 설치 시작..."
 
-이 저장소는 AWS Lightsail 인스턴스에 n8n, Nginx Proxy Manager, OpenWebUI를 한 번에 설치하기 위한 스크립트를 제공합니다.
+# 관리자 패스워드 설정
+setup_admin_password
 
-## 시스템 요구사항
+# 스왑 메모리 설정
+setup_swap
 
-- AWS Lightsail 인스턴스 (최소 2GB RAM, 2 vCPU 권장)
-- Ubuntu 20.04 LTS 이상
-- 관리자(sudo) 권한
+# Docker 설치
+install_docker
 
-## 설치 방법
+# 디렉토리 구조 생성
+create_directory_structure
 
-1. AWS Lightsail 인스턴스에 SSH로 접속합니다.
+# 환경 변수 설정
+setup_environment
 
-2. 다음 명령어로 설치 스크립트를 다운로드합니다:
+# Docker Compose 파일 생성
+create_n8n_compose
+create_npm_compose
+create_openwebui_compose
 
-\`\`\`bash
-wget https://raw.githubusercontent.com/your-username/aws-n8n/main/total-install.sh
-chmod +x total-install.sh
-\`\`\`
+# 설정 변경 스크립트 생성
+create_config_scripts
 
-3. 스크립트를 실행합니다:
+# 서비스 시작 스크립트 생성
+create_start_script
 
-\`\`\`bash
-sudo bash total-install.sh
-\`\`\`
-
-4. 설치 과정에서 다음 정보를 입력해야 합니다:
-   - 관리자 패스워드
-   - n8n 웹훅 URL (예: https://n8n.example.com)
-
-5. 설치가 완료되면 다음 URL로 각 서비스에 접근할 수 있습니다:
-   - Nginx Proxy Manager: http://your-server-ip:81
-   - n8n: https://your-n8n-domain
-   - OpenWebUI: http://your-server-ip:2000
-
-## 디렉토리 구조
-
-설치 후 다음과 같은 디렉토리 구조가 생성됩니다:
-
-\`\`\`
-~/docker/
-├── n8n/
-│   ├── docker-compose.yml
-│   ├── .env
-│   ├── data/
-│   ├── n8n_data/
-│   └── update-n8n-config.sh
-├── npm/
-│   ├── docker-compose.yml
-│   ├── data/
-│   ├── letsencrypt/
-│   └── mysql/
-├── openwebui/
-│   ├── docker-compose.yml
-│   ├── data/
-│   ├── postgres/
-│   └── update-openwebui-config.sh
-└── start-services.sh
-\`\`\`
-
-## 설정 변경
-
-각 서비스의 설정을 변경하려면 다음 스크립트를 사용할 수 있습니다:
-
-- n8n 설정 변경: \`~/docker/n8n/update-n8n-config.sh\`
-- OpenWebUI 설정 변경: \`~/docker/openwebui/update-openwebui-config.sh\`
-
-## 서비스 시작/중지
-
-모든 서비스를 한 번에 시작하려면:
-
-\`\`\`bash
-~/docker/start-services.sh
-\`\`\`
-
-개별 서비스를 시작/중지하려면:
-
-\`\`\`bash
-# n8n 시작
-cd ~/docker/n8n && docker-compose up -d
-
-# n8n 중지
-cd ~/docker/n8n && docker-compose down
-
-# Nginx Proxy Manager 시작
-cd ~/docker/npm && docker-compose up -d
-
-# Nginx Proxy Manager 중지
-cd ~/docker/npm && docker-compose down
-
-# OpenWebUI 시작
-cd ~/docker/openwebui && docker-compose up -d
-
-# OpenWebUI 중지
-cd ~/docker/openwebui && docker-compose down
-\`\`\`
-
-## Nginx Proxy Manager 초기 설정
-
-Nginx Proxy Manager에 처음 로그인할 때 다음 기본 자격 증명을 사용하세요:
-
-- 이메일: admin@example.com
-- 비밀번호: changeme
-
-로그인 후 반드시 이메일과 비밀번호를 변경하세요.
-
-## 문제 해결
-
-문제가 발생하면 다음 로그를 확인하세요:
-
-\`\`\`bash
-# n8n 로그 확인
-cd ~/docker/n8n && docker-compose logs -f
-
-# Nginx Proxy Manager 로그 확인
-cd ~/docker/npm && docker-compose logs -f
-
-# OpenWebUI 로그 확인
-cd ~/docker/openwebui && docker-compose logs -f
-\`\`\`
-
-## 라이센스
-
-MIT
-EOF
-    
-    log "README.md 파일 생성 완료"
-}
-
-# GitHub 설정 안내
-github_setup_guide() {
-    log "GitHub 설정 안내..."
-    
-    cat > /home/$SUDO_USER/aws-n8n/github-setup.md << EOF
-# GitHub 저장소 설정 가이드
-
-이 가이드는 AWS Lightsail n8n 설치 스크립트를 GitHub에 업로드하는 방법을 설명
+log "설치가 완료되었습니다."
+log "서비스를 시작하려면 다음 명령어를 실행하세요:"
+log "cd /home/$SUDO_USER/docker && ./start-services.sh"
