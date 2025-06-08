@@ -1,0 +1,62 @@
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: always
+    container_name: n8n
+    ports:
+      - "${N8N_PORT}:5678"
+    environment:
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=${N8N_PORT}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - NODE_ENV=production
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+      - N8N_EMAIL_MODE=${N8N_EMAIL_MODE}
+      - N8N_SMTP_HOST=${N8N_SMTP_HOST}
+      - N8N_SMTP_PORT=${N8N_SMTP_PORT}
+      - N8N_SMTP_USER=${N8N_SMTP_USER}
+      - N8N_SMTP_PASS=${N8N_SMTP_PASS}
+      - N8N_SMTP_SENDER=${N8N_SMTP_SENDER}
+      - N8N_TRUSTED_PROXIES=*
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      - GENERIC_TIMEZONE=Asia/Seoul
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+    depends_on:
+      - postgres
+    networks:
+      - n8n-network
+
+  postgres:
+    container_name: n8n-db
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - n8n-network
+    ports:
+      - "5432:5432"
+  
+volumes:
+  n8n_data:
+  postgres_data:
+
+networks:
+  n8n-network:
+    driver: bridge

@@ -1,0 +1,36 @@
+services:
+  webui-db:
+    container_name: open-webui-db
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=webui
+      - POSTGRES_USER=webui
+      - POSTGRES_PASSWORD=webui-password
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U webui -d webui -p 5432"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  open-webui:
+    container_name: open-webui
+    image: ghcr.io/open-webui/open-webui:main
+    depends_on:
+      webui-db:
+        condition: service_healthy
+    ports:
+      - "2000:8080"
+    environment:
+      - 'DATABASE_URL=postgresql://webui:webui-password@webui-db:5432/webui'
+    volumes:
+      - ./data:/app/backend/data
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
