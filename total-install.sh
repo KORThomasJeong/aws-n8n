@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # AWS Lightsail에 n8n, Nginx Proxy Manager, OpenWebUI 설치 스크립트
-# 작성자: Cline
+# 작성자: ThomasJeong
 # 날짜: 2025-06-08
 
 # 색상 정의
