@@ -152,10 +152,11 @@ setup_environment() {
     N8N_DOMAIN=$(echo $N8N_WEBHOOK_URL | sed -E 's|https?://||' | sed -E 's|:[0-9]+$||')
     
     # 암호화 키 생성
-    N8N_ENCRYPTION_KEY=$(openssl rand -base64 32)
+    N8N_ENCRYPTION_KEY=$(openssl rand -base64 32 | tr -dc 'A-Za-z0-9')
     
     # PostgreSQL 비밀번호 생성
-    POSTGRES_PASSWORD=$(openssl rand -base64 32)
+    POSTGRES_PASSWORD=$(openssl rand -base64 32 | tr -dc 'A-Za-z0-9')
+    
     
     # n8n .env 파일 생성
     cat > /home/$SUDO_USER/docker/n8n/.env << EOF
@@ -191,7 +192,7 @@ N8N_RUNNERS_ENABLED=true
 EOF
     
     # OpenWebUI 환경 변수
-    OPENWEBUI_DB_PASSWORD=$(openssl rand -base64 12)
+    OPENWEBUI_DB_PASSWORD=$(openssl rand -base64 12 | tr -dc 'A-Za-z0-9')
     
     log "환경 변수 설정 완료"
 }
