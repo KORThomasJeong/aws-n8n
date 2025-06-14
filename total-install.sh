@@ -192,7 +192,7 @@ N8N_RUNNERS_ENABLED=true
 EOF
     
     # OpenWebUI 환경 변수
-    OPENWEBUI_DB_PASSWORD=$(openssl rand -base64 12 | tr -dc 'A-Za-z0-9')
+    OPENWEBUI_DB_PASSWORD=$(openssl rand -base64 32 | tr -dc 'A-Za-z0-9')
     
     log "환경 변수 설정 완료"
 }
