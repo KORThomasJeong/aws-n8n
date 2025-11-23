@@ -194,6 +194,9 @@ EOF
     # OpenWebUI 환경 변수
     OPENWEBUI_DB_PASSWORD=$(openssl rand -base64 32 | tr -dc 'A-Za-z0-9')
     
+    # NPM (Nginx Proxy Manager) 비밀번호 생성
+    NPM_DB_PASSWORD=$(openssl rand -base64 32 | tr -dc 'A-Za-z0-9')
+    
     log "환경 변수 설정 완료"
 }
 
@@ -287,7 +290,7 @@ services:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_PASSWORD: "$NPM_DB_PASSWORD"
       DB_MYSQL_NAME: "npm"
     volumes:
       - ./data:/data
@@ -299,10 +302,10 @@ services:
     image: 'yobasystems/alpine-mariadb:latest'
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_ROOT_PASSWORD: '$NPM_DB_PASSWORD'
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
+      MYSQL_PASSWORD: '$NPM_DB_PASSWORD'
       TZ: Asia/Seoul
     volumes:
       - ./mysql:/var/lib/mysql
@@ -311,7 +314,14 @@ networks:
     name: npm
 EOF
     
+    # NPM 비밀번호를 파일에 저장
+    cat > /home/$SUDO_USER/docker/npm/.env << EOF
+# Nginx Proxy Manager 데이터베이스 비밀번호
+NPM_DB_PASSWORD=$NPM_DB_PASSWORD
+EOF
+    
     log "Nginx Proxy Manager Docker Compose 파일 생성 완료"
+    log "NPM 데이터베이스 비밀번호: $NPM_DB_PASSWORD"
 }
 
 # OpenWebUI Docker Compose 파일 생성
